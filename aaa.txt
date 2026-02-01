@@ -1,0 +1,18 @@
+DIY-VectorDB
+projeto para aprender docker, interação com modelos no ollama e banco de dados vetoriais ( por sua possibilidade de retornar iformações similares )
+usando ollama com embeddinggemma para gerar embeddings em um conteiner docker
+golang como linguagem pricipal para a api rest do DB usando chi-router
+
+como usar:
+baixar o projeto
+executar na pasta do projeto: docker compose up --build
+
+
+enquando o conteiner executa na primeira vez abra um novo terminal e execute:  docker exec -it diy-vectordb-ollama-1 ollama pull embeddinggemma:300m
+reinicie o projeto de novo com : docker compose up --build
+
+funções:
+gerar embeddings (feito)
+recber informações por requições ( a fazer )
+armazenar informações e embeddings como chave ( a fazer )
+pesquisar informções parecidas pelos embeddings ( a fazer )
