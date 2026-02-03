@@ -1,59 +1,21 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
+	"DIY-VectorDB/internal/db"
+	"DIY-VectorDB/internal/http/server"
+
+	"log"
 	"net/http"
 )
 
-type ollamaRequest struct {
-	Model  string   `json:"model"`
-	Prompt []string `json:"input"`
-}
-
-type OllamaEmbeddingResponse struct {
-	Model     string      `json:"model"`
-	Embedding [][]float64 `json:"embeddings"`
-}
-
-func GetEmbedding(model string, prompt []string) error {
-	reqBody := ollamaRequest{
-		Model:  model,
-		Prompt: prompt,
-	}
-
-	jsonData, err := json.Marshal(reqBody)
-	if err != nil {
-		return err
-	}
-
-	resp, err := http.Post("http://ollama:11434/api/embed", "application/json", bytes.NewBuffer(jsonData))
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	var ollamaResponse OllamaEmbeddingResponse
-	err = json.NewDecoder(resp.Body).Decode(&ollamaResponse)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(len(ollamaResponse.Embedding[0]))
-	fmt.Println(ollamaResponse.Embedding)
-
-	return nil
-}
-
 func main() {
-	model := "embeddinggemma:300m"
-	prompt := "Texto para gerar embedding"
-	var input []string
-	input = append(input, prompt)
+	dbm := db.NewMemDB()
 
-	err := GetEmbedding(model, input)
-	if err != nil {
-		fmt.Println(err)
-	}
+	r := server.NewRouter()
+
+	r.Mount("/store", server.StoreRoutes(dbm))
+	r.Mount("/fetch", server.FetchRoutes(dbm))
+
+	log.Print("Listening on port 8080")
+	log.Fatal(http.ListenAndServe(":8080", r))
 }

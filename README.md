@@ -18,7 +18,8 @@ Um projeto para aprendizado prático com **Docker**, **bancos de dados vetoriais
 Atualmente o projeto possui algumas funcionalidades implementadas e outras planejadas:
 
 - ✅ Gerar embeddings a partir de textos.
-- ⚪ Receber informações via requisições HTTP (em desenvolvimento).
+- ✅ Receber informações via requisições HTTP.
+- ⚪ Api rest fazendo aceitando requisções básicas
 - ⚪ Armazenar informações e embeddings como chave (em desenvolvimento).
 - ⚪ Pesquisar informações similares usando embeddings (em desenvolvimento).
 
