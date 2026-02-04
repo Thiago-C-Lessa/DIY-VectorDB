@@ -1,6 +1,6 @@
 # DIY-VectorDB
 
-Um projeto para aprendizado prático com **Docker**, **bancos de dados vetoriais(Muito utililzados em aplicoes de IA)**, **grafos** e **modelos de linguagem da Ollama**. O foco é explorar a capacidade de buscar informações similares usando embeddings e construir uma API REST e Implementação do [HNSW](https://www.pinecone.io/learn/series/faiss/hnsw/) em **Golang**.
+Um projeto para aprendizado prático com **Docker**, **bancos de dados vetoriais(Muito utililzado em aplicoes de IA)**, **grafos** e **modelos de linguagem da Ollama**. O foco é explorar a capacidade de buscar informações similares usando embeddings e construir uma API REST e Implementação do [HNSW](https://www.pinecone.io/learn/series/faiss/hnsw/) em **Golang**.
 
 ---
 

@@ -123,6 +123,69 @@ func TestMinUint64(t *testing.T) {
 	}
 }
 
+func TestEuclideanDistance(t *testing.T) {
+	var a, b [768]float32
+
+	// Caso 1: vetores iguais → distância = 0
+	for i := 0; i < 768; i++ {
+		a[i] = 1.0
+		b[i] = 1.0
+	}
+
+	dist := EuclideanDistance(a, b)
+	if dist != 0 {
+		t.Errorf("expected distance 0, got %f", dist)
+	}
+
+	// Caso 2: um vetor zero, outro unitário em uma dimensão
+	a = [768]float32{}
+	b = [768]float32{}
+	b[0] = 1.0
+
+	dist = EuclideanDistance(a, b)
+	if math.Abs(float64(dist-1.0)) > 1e-6 {
+		t.Errorf("expected distance 1, got %f", dist)
+	}
+
+	// Caso 3: vetores opostos normalizados
+	// distância esperada = sqrt( (1 - (-1))^2 ) = 2
+	a = [768]float32{}
+	b = [768]float32{}
+	a[0] = 1.0
+	b[0] = -1.0
+
+	dist = EuclideanDistance(a, b)
+	if math.Abs(float64(dist-2.0)) > 1e-6 {
+		t.Errorf("expected distance 2, got %f", dist)
+	}
+
+	// Caso 4: simetria
+	a = [768]float32{}
+	b = [768]float32{}
+	a[10] = 0.3
+	b[10] = -0.7
+
+	d1 := EuclideanDistance(a, b)
+	d2 := EuclideanDistance(b, a)
+
+	if math.Abs(float64(d1-d2)) > 1e-6 {
+		t.Errorf("distance not symmetric: %f vs %f", d1, d2)
+	}
+
+	// Caso 5: consistência com soma dos quadrados
+	a = [768]float32{}
+	b = [768]float32{}
+	a[0] = 0.6
+	b[0] = 0.8
+
+	expected := float32(math.Sqrt(float64((0.6 - 0.8) * (0.6 - 0.8))))
+	dist = EuclideanDistance(a, b)
+
+	if math.Abs(float64(dist-expected)) > 1e-6 {
+		t.Errorf("expected %f, got %f", expected, dist)
+	}
+}
+
 func BenchmarkNormalizeVector(b *testing.B) {
 	var v [768]float32
 
@@ -166,6 +229,22 @@ func BenchmarkCosineProductPreNormalized(b *testing.B) {
 	b.ResetTimer()
 	for range b.N {
 		result := CosineProductPreNormalized(v, v)
+		result += .1
+		result -= .2
+		result += .4
+	}
+}
+
+func BenchmarkEuclideanDistance(b *testing.B) {
+	var v [768]float32
+	for i := range v {
+		v[i] = rand.Float32()
+	}
+
+	b.ResetTimer()
+
+	for range b.N {
+		result := EuclideanDistance(v, v)
 		result += .1
 		result -= .2
 		result += .4

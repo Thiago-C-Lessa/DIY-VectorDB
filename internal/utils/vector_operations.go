@@ -47,3 +47,15 @@ func CosineProductPreNormalized(a, b [768]float32) float32 {
 	cosineValue := DotProduct(a, b)
 	return cosineValue
 }
+
+func EuclideanDistance(a, b [768]float32) float32 {
+	var dist float32 = 0.0
+	var coor float32 = 0.0
+
+	for i, _ := range a {
+		coor = a[i] - b[i]
+		dist += (coor * coor)
+	}
+
+	return float32(math.Sqrt(float64(dist)))
+}
