@@ -114,6 +114,15 @@ func TestCosineProduct_KnownValue(t *testing.T) {
 	}
 }
 
+func TestMinUint64(t *testing.T) {
+	var a uint64 = math.MaxUint64
+	var b uint64 = 1
+	var c uint64 = MinUint64(a, b)
+	if c != b {
+		t.Errorf("MinUint64 failed: expected %v, got %v", b, c)
+	}
+}
+
 func BenchmarkNormalizeVector(b *testing.B) {
 	var v [768]float32
 

@@ -9,6 +9,7 @@ type DB interface {
 	Insert(key string, value json.RawMessage) error
 	ListAll() (models.ResponseData, error)
 	Select(key string) (models.ResponseData, error)
-	//SelectSimilar(key [768]float64) ([]interface{}, error)
-	//Delete(key [768]float64) error
+	SelectSimilar(key string, k uint64) (models.ResponseData, error)
+	//Delete(key string) error
+	Update(key string, value json.RawMessage) error
 }

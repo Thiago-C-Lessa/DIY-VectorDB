@@ -13,6 +13,7 @@ func FetchRoutes(db db.DB) http.Handler {
 
 	r.Get("/all", handler.Query_All(db))
 	r.Get("/one/{key}", handler.Select(db))
+	r.Get("/similar/{key}/{qtd}", handler.SelectSimilar(db))
 
 	return r
 }

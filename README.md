@@ -1,6 +1,6 @@
 # DIY-VectorDB
 
-Um projeto para aprendizado prático com **Docker**, **bancos de dados vetoriais(Muito utililzados em aplicoes de IA)** e **modelos de linguagem da Ollama**. O foco é explorar a capacidade de buscar informações similares usando embeddings e construir uma API REST simples em **Golang**.
+Um projeto para aprendizado prático com **Docker**, **bancos de dados vetoriais(Muito utililzados em aplicoes de IA)**, **grafos** e **modelos de linguagem da Ollama**. O foco é explorar a capacidade de buscar informações similares usando embeddings e construir uma API REST e Implementação do [HNSW](https://www.pinecone.io/learn/series/faiss/hnsw/) em **Golang**.
 
 ---
 
@@ -8,7 +8,7 @@ Um projeto para aprendizado prático com **Docker**, **bancos de dados vetoriais
 
 - **Docker**: Para containerização do ambiente e facilidade de execução.
 - **Ollama**: Para geração de embeddings através do modelo `embeddinggemma`.
-- **Golang**: Linguagem principal para a API REST.
+- **Golang**: Linguagem principal para a API REST, e implementação do banco de dados vetorial usando o [HNSW](https://www.pinecone.io/learn/series/faiss/hnsw/), mesmo algoritmo utilizado em nos bancos vetoriais [Milvus](https://milvus.io/pt) e [Qdrant](https://qdrant.tech/).
 - **Chi Router**: Para gerenciamento de rotas na API.
 
 ---
@@ -19,9 +19,21 @@ Atualmente o projeto possui algumas funcionalidades implementadas e outras plane
 
 - ✅ Gerar embeddings a partir de textos.
 - ✅ Receber informações via requisições HTTP.
-- ⚪ Api rest fazendo aceitando requisções básicas
-- ⚪ Armazenar informações e embeddings como chave (em desenvolvimento).
-- ⚪ Pesquisar informações similares usando embeddings (em desenvolvimento).
+- ✅ Armazenar informações e embeddings como chave.
+- ✅ Pesquisar informações similares usando embeddings.
+- 🟡 Implementação do HNSW em memória.
+- 🟡 Api rest fazendo aceitando requisções básicas CRUD com HNSW (
+    * ✅ Create O(LogN)
+    * ✅ Read (
+      * ✅ List one O(1)
+      * ✅ List all O(N) - N intens no grafo
+      * ✅ List similar O(LogN * M) - M = Número máximo de vizinho ( padrão 8) ou intens no grafo se tiver menos de 8 itens
+ 
+    * ✅ Update O(1)
+    * 🟡 Delete ( em desenvolvimento)
+    
+  )
+- ⚪ Documentação de rotas Chi
 
 ---
 

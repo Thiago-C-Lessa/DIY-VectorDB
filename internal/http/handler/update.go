@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func Store(db db.DB) http.HandlerFunc {
+func Update(db db.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var rawData map[string]json.RawMessage
 		var rData models.RequestData
@@ -36,7 +36,7 @@ func Store(db db.DB) http.HandlerFunc {
 			return
 		}
 
-		err = db.Insert(rData.Key, rData.Rest)
+		err = db.Update(rData.Key, rData.Rest)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -45,7 +45,7 @@ func Store(db db.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		_, err = w.Write(rData.Rest)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		w.WriteHeader(http.StatusOK)

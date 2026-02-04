@@ -8,10 +8,10 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func StoreRoutes(db db.DB) http.Handler {
+func UpdateRoutes(db db.DB) http.Handler {
 	r := chi.NewRouter()
 
-	r.Post("/", handler.Store(db))
+	r.Put("/", handler.Update(db))
 
 	return r
 }
