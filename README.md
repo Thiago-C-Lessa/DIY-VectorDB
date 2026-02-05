@@ -1,4 +1,4 @@
-# DIY-VectorDB
+# DIY-VectorDB + Dashboard
 
 Um projeto para aprendizado prático com **Docker**, **bancos de dados vetoriais(Muito utililzado em aplicoes de IA)**, **grafos** e **modelos de linguagem da Ollama**. O foco é explorar a capacidade de buscar informações similares usando embeddings e construir uma API REST e Implementação do [HNSW](https://www.pinecone.io/learn/series/faiss/hnsw/) em **Golang**.
 
@@ -40,7 +40,7 @@ Atualmente o projeto possui algumas funcionalidades implementadas e outras plane
 - ⚪ Documentação de rotas Chi
 - ✅ Dashboard em tempo real com **Grafana** e **Prometheus**, mostrando métricas de requisições HTTP e performance do banco vetorial.
   
-- <img src="readme_assets/dashboard_screenshot.png" alt="Screenshot Dashboard Grafana + Prometehus" width="200"/>
+- <img src="readme_assets/dashboard_screenshot.png" alt="Screenshot Dashboard Grafana + Prometehus" width="600"/>
 
 
 ---
