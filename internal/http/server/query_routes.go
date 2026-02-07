@@ -12,8 +12,8 @@ func FetchRoutes(db db.DB) http.Handler {
 	r := chi.NewRouter()
 
 	r.Get("/all", handler.Query_All(db))
-	r.Get("/one/{key}", handler.Select(db))
-	r.Get("/similar/{key}/{qtd}", handler.SelectSimilar(db))
+	r.Get("/one/", handler.Select(db))
+	r.Get("/similar/", handler.SelectSimilar(db))
 
 	return r
 }

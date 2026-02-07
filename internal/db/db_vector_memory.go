@@ -5,16 +5,15 @@ import (
 	"DIY-VectorDB/internal/http/embedding"
 	"DIY-VectorDB/internal/models"
 	"DIY-VectorDB/internal/utils"
-	"sort"
-
 	"encoding/json"
 	"math"
 	"math/rand/v2"
+	"sort"
 	"sync"
 )
 
 var (
-	M uint64 = 8 //para um dataset <= 10k
+	M uint64 = 10 //para um dataset <= 10k
 )
 
 type Node struct {
@@ -33,7 +32,7 @@ type VecMemDB struct {
 	eFSearch           uint64
 	entry              *Node
 	embeddings         map[string][768]float32
-	dataForSingleQuery map[[768]float32]*Node
+	dataForSingleQuery map[string]*Node
 }
 
 type candidate struct {
@@ -44,7 +43,7 @@ type candidate struct {
 func NewVecMemDB() *VecMemDB {
 	return &VecMemDB{
 		embeddings:         make(map[string][768]float32),
-		dataForSingleQuery: make(map[[768]float32]*Node),
+		dataForSingleQuery: make(map[string]*Node),
 		maxNeighbors:       M,
 		eFConstruction:     2 * M,
 		eFSearch:           M * M,
@@ -97,7 +96,7 @@ func (vdb *VecMemDB) Insert(key string, value json.RawMessage) error {
 
 	vdb.embeddings[key] = emb
 	n := newNode(emb, &value, &key)
-	vdb.dataForSingleQuery[emb] = n
+	vdb.dataForSingleQuery[key] = n
 
 	if vdb.entry == nil {
 		vdb.entry = n
@@ -231,7 +230,7 @@ func (vdb *VecMemDB) SelectSimilar(key string, k uint64) (models.ResponseData, e
 	defer vdb.RUnlock()
 
 	if k == 0 {
-		k = 8
+		k = M
 	}
 
 	var response models.ResponseData
@@ -252,6 +251,8 @@ func (vdb *VecMemDB) SelectSimilar(key string, k uint64) (models.ResponseData, e
 	}
 
 	candidates := vdb.searchLayer(query, ep, 0, vdb.eFSearch)
+	selfNode := vdb.dataForSingleQuery[key]
+	candidates = append(candidates, selfNode)
 
 	results := vdb.selectNeighbors(candidates, query, k)
 
@@ -270,12 +271,12 @@ func (vdb *VecMemDB) Select(key string) (models.ResponseData, error) {
 
 	var response models.ResponseData
 
-	emb, ok := vdb.embeddings[key]
+	_, ok := vdb.embeddings[key]
 	if !ok {
 		return response, &exceptions.ErrorContentNotFound{Key: key}
 	}
 
-	d, _ := vdb.dataForSingleQuery[emb]
+	d, _ := vdb.dataForSingleQuery[key]
 
 	response.Keys = append(response.Keys, key)
 	response.Contents = append(response.Contents, *d.data)
@@ -289,8 +290,8 @@ func (vdb *VecMemDB) ListAll() (models.ResponseData, error) {
 
 	var data models.ResponseData
 
-	for key, emb := range vdb.embeddings {
-		content, ok := vdb.dataForSingleQuery[emb]
+	for key, _ := range vdb.embeddings {
+		content, ok := vdb.dataForSingleQuery[key]
 		if !ok {
 			return data, &exceptions.ErrorContentNotFound{Key: key}
 		}
@@ -305,11 +306,11 @@ func (vdb *VecMemDB) ListAll() (models.ResponseData, error) {
 func (vdb *VecMemDB) Update(key string, value json.RawMessage) error {
 	vdb.Lock()
 	defer vdb.Unlock()
-	emb, ok := vdb.embeddings[key]
+	_, ok := vdb.embeddings[key]
 	if !ok {
 		return &exceptions.ErrorContentNotFound{Key: key}
 	}
 
-	vdb.dataForSingleQuery[emb].data = &value
+	vdb.dataForSingleQuery[key].data = &value
 	return nil
 }

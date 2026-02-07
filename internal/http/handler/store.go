@@ -10,7 +10,7 @@ import (
 func Store(db db.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var rawData map[string]json.RawMessage
-		var rData models.RequestData
+		var rData models.RequestPostData
 
 		if err := json.NewDecoder(r.Body).Decode(&rawData); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -43,11 +43,11 @@ func Store(db db.DB) http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
 		_, err = w.Write(rData.Rest)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.WriteHeader(http.StatusOK)
 	}
 }

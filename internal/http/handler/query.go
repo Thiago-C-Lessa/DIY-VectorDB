@@ -2,11 +2,9 @@ package handler
 
 import (
 	"DIY-VectorDB/internal/db"
+	"DIY-VectorDB/internal/models"
 	"encoding/json"
 	"net/http"
-	"strconv"
-
-	"github.com/go-chi/chi/v5"
 )
 
 func Query_All(db db.DB) http.HandlerFunc {
@@ -23,18 +21,24 @@ func Query_All(db db.DB) http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
 		_, err = w.Write(jsonData)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-		w.WriteHeader(http.StatusOK)
 	}
 }
 
 func Select(db db.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		k := chi.URLParam(r, "key")
-		data, err := db.Select(k)
+		var jsonKey models.RequestFetchOne
+		err := json.NewDecoder(r.Body).Decode(&jsonKey)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		data, err := db.Select(jsonKey.Key)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -48,27 +52,25 @@ func Select(db db.DB) http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
 		_, err = w.Write(jsonData)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.WriteHeader(http.StatusOK)
 	}
 }
 
 func SelectSimilar(db db.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		key := chi.URLParam(r, "key")
-		k := chi.URLParam(r, "qtd")
-
-		kUint64, err := strconv.ParseUint(k, 10, 64)
+		var jsonKey models.RequestFetchSimilar
+		err := json.NewDecoder(r.Body).Decode(&jsonKey)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		response, err := db.SelectSimilar(key, kUint64)
+		response, err := db.SelectSimilar(jsonKey.Key, jsonKey.K)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -81,11 +83,11 @@ func SelectSimilar(db db.DB) http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
 		_, err = w.Write(jsonData)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.WriteHeader(http.StatusOK)
 	}
 }
